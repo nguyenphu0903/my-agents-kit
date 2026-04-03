@@ -1,0 +1,39 @@
+{
+  "name": "@duyphu/dev-ag-kit",
+  "version": "2.0.0",
+  "description": "AI Agent Kit with Golang focus - Backend specialists for Go, Kafka, NATS, Redis, and distributed systems",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nguyenphu0903/my-agents-kit.git"
+  },
+  "homepage": "https://github.com/nguyenphu0903/my-agents-kit#readme",
+  "bugs": {
+    "url": "https://github.com/nguyenphu0903/my-agents-kit/issues"
+  },
+  "keywords": [
+    "ai-agent",
+    "golang",
+    "backend",
+    "kafka",
+    "nats",
+    "redis",
+    "distributed-systems",
+    "antigravity",
+    "ai",
+    "agent",
+    "gemini",
+    "skills",
+    "templates"
+  ],
+  "author": "duyphu",
+  "license": "MIT",
+  "bin": {
+    "dev-ag-kit": "./bin/cli.js"
+  },
+  "files": [
+    ".agent",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ]
+}

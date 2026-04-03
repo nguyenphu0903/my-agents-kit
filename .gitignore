@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+.dev-ag-kit-temp/
+.agent.backup/
+.worktrees/
+worktrees/
+*.log
+*.tgz
