@@ -29,6 +29,7 @@ It combines specialist agents, reusable skills, and slash-style workflows for Go
 ```bash
 npm install -g github:nguyenphu0903/my-agents-kit
 dev-ag-kit init
+dev-ag-kit init --copilot
 ```
 
 ### Option 2: Local development in this repo
@@ -36,6 +37,7 @@ dev-ag-kit init
 ```bash
 npm link
 dev-ag-kit init
+dev-ag-kit init --copilot
 ```
 
 ### Option 3: Existing published npm package
@@ -45,6 +47,7 @@ The package name is still:
 ```bash
 npm install -g @duyphu/dev-ag-kit
 dev-ag-kit init
+dev-ag-kit init --copilot
 ```
 
 ### If npm or npx fails with permissions
@@ -58,15 +61,19 @@ sudo chown -R $(id -u):$(id -g) ~/.npm
 The CLI currently supports:
 
 - `dev-ag-kit init`
+- `dev-ag-kit init --copilot`
 - `dev-ag-kit update`
+- `dev-ag-kit update --copilot`
 - `dev-ag-kit status`
 
 Current behavior is intentionally simple:
 
 - commands run against the current working directory
-- `init` copies the local `.agent` folder when running from a linked/dev install
-- otherwise it clones the GitHub repo and copies `.agent`
-- `update` replaces the existing `.agent` folder with the latest version from the configured repo
+- `init` copies the local kit files when running from a linked/dev install
+- otherwise it clones the GitHub repo and installs the kit into the current project
+- `init --copilot` and `update --copilot` auto-generate GitHub Copilot custom agent files in `.github/agents/*.agent.md` from `.agent/agents/*.md`
+- plain `init` and `update` do not touch `.github/agents`
+- `update --copilot` regenerates only the kit-generated Copilot agents and does not wipe unrelated custom agents
 
 The README only documents behavior that is actually implemented in `bin/cli.js`.
 
@@ -92,6 +99,16 @@ GEMINI.md
 CLAUDE.md
 .claude/
 .cursor/
+```
+
+If you pass `--copilot`, it also generates:
+
+```text
+.github/agents/
+├── backend-specialist.agent.md
+├── golang-specialist.agent.md
+├── security-auditor.agent.md
+└── ...
 ```
 
 Typical usage examples:
@@ -140,6 +157,22 @@ Available workflows:
 - `/status`
 - `/test`
 - `/ui-ux-pro-max`
+
+## IDE Compatibility
+
+This kit ships cross-IDE adapter files, but each tool has its own discovery rules and feature gates.
+
+- GitHub Copilot: `init --copilot` and `update --copilot` generate `.github/agents/*.agent.md` from `.agent/agents/*.md`, so Copilot-compatible custom agents are created inside the target repo only when requested.
+- Gemini: uses root `GEMINI.md`.
+- Claude-compatible tools: use root `CLAUDE.md` plus the shipped `.claude/commands`.
+- Cursor: uses the shipped `.cursor/rules`.
+
+If GitHub Copilot does not show the custom agent, check these first:
+
+- the client version actually supports custom agents
+- the repository contains `.github/agents/*.agent.md`
+- `dev-ag-kit init --copilot` or `dev-ag-kit update --copilot` has already been run in that repo
+- the workspace has been reloaded after installing or updating the kit
 
 ## Go-Specific Strength
 
