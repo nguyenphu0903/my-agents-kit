@@ -32,6 +32,11 @@
   },
   "files": [
     ".agent",
+    ".claude",
+    ".cursor",
+    "AGENTS.md",
+    "GEMINI.md",
+    "CLAUDE.md",
     "bin",
     "README.md",
     "LICENSE"

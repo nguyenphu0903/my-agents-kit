@@ -1,6 +1,6 @@
 # AI Agent Kit
 
-Golang-focused agent kit for backend-heavy projects, packaged as a reusable `.agent` workspace that can be installed into other repositories.
+Golang-focused agent kit for backend-heavy projects, packaged as a reusable `.agent` workspace plus lightweight IDE adapter files that can be installed into other repositories.
 
 It combines specialist agents, reusable skills, and slash-style workflows for Go, distributed systems, APIs, infrastructure, security, frontend work, and review-driven delivery.
 
@@ -9,6 +9,8 @@ It combines specialist agents, reusable skills, and slash-style workflows for Go
 - `21` specialist agents in `.agent/agents`
 - `52` skills in `.agent/skills`
 - `13` workflows in `.agent/workflows`
+- root adapter files for `AGENTS.md`, `GEMINI.md`, and `CLAUDE.md`
+- runtime adapters in `.claude/` and `.cursor/`
 - a small CLI in `bin/cli.js` for `init`, `update`, and `status`
 
 ## Focus Areas
@@ -82,6 +84,16 @@ After installation in a target project, the kit adds a `.agent` directory with:
 └── ARCHITECTURE.md
 ```
 
+It also installs lightweight compatibility files:
+
+```text
+AGENTS.md
+GEMINI.md
+CLAUDE.md
+.claude/
+.cursor/
+```
+
 Typical usage examples:
 
 ```text
@@ -153,8 +165,8 @@ This repo is primarily a content kit built around a `.agent` folder.
 That means:
 
 - it works well as a shared source of truth for your own agent setup
-- some IDEs and agent runtimes may need adapter files like `AGENTS.md`, root `GEMINI.md`, or tool-specific folders to auto-discover instructions
-- the current CLI installs `.agent`, not a full multi-runtime adapter layer
+- the repo now ships thin adapters for common runtimes through `AGENTS.md`, `GEMINI.md`, `CLAUDE.md`, `.claude/`, and `.cursor/`
+- `.agent/` remains the canonical source of truth behind those adapters
 
 ## Repo Notes
 

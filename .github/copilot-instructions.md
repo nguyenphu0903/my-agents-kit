@@ -24,7 +24,7 @@
 
 ## Conventions
 
-- Use `.github/copilot-instructions.md` for workspace-wide guidance; do not add a parallel `AGENTS.md` in this repo.
+- `.agent/` remains the canonical source of truth even when adapter files such as `AGENTS.md`, `GEMINI.md`, `CLAUDE.md`, `.claude/commands/`, or `.cursor/rules/` are present.
 - Keep workspace guidance minimal and relevant to all tasks.
 - Add narrower `.instructions.md` files only when a rule applies to a specific folder or file pattern.
 - When introducing a new agent, skill, or workflow, update the relevant docs and keep frontmatter names aligned with filenames.

@@ -13,6 +13,14 @@ const path = require("path");
 
 const REPO_URL = "https://github.com/nguyenphu0903/my-agents-kit.git";
 const AGENT_DIR = ".agent";
+const INSTALL_PATHS = [
+    ".agent",
+    "AGENTS.md",
+    "GEMINI.md",
+    "CLAUDE.md",
+    ".claude",
+    ".cursor",
+];
 
 function main() {
     const args = process.argv.slice(2);
@@ -53,8 +61,8 @@ function initAgentKit() {
         if (fs.existsSync(devSourcePath)) {
             // Development mode: copy from local
             console.log("📦 Using local development version...");
-            fs.cpSync(devSourcePath, agentPath, { recursive: true });
-            console.log("✅ .agent folder installed successfully!");
+            installAssets(path.join(__dirname, ".."), targetDir);
+            console.log("✅ Agent kit installed successfully!");
         } else {
             // Production mode: clone from GitHub
             const tempDir = path.join(targetDir, ".dev-ag-kit-temp");
@@ -63,11 +71,9 @@ function initAgentKit() {
                 stdio: "ignore",
             });
 
-            // Copy .agent folder
-            const sourceAgent = path.join(tempDir, AGENT_DIR);
-            if (fs.existsSync(sourceAgent)) {
-                fs.cpSync(sourceAgent, agentPath, { recursive: true });
-                console.log("✅ .agent folder installed successfully!");
+            if (fs.existsSync(path.join(tempDir, AGENT_DIR))) {
+                installAssets(tempDir, targetDir);
+                console.log("✅ Agent kit installed successfully!");
             } else {
                 throw new Error(".agent folder not found in repository");
             }
@@ -130,12 +136,10 @@ function updateAgentKit() {
     }
 
     try {
-        // Backup existing .agent
+        // Backup existing installed assets
         const backupPath = path.join(targetDir, ".agent.backup");
-        if (fs.existsSync(backupPath)) {
-            fs.rmSync(backupPath, { recursive: true, force: true });
-        }
-        fs.renameSync(agentPath, backupPath);
+        resetDir(backupPath);
+        backupInstalledAssets(targetDir, backupPath);
 
         // Download latest
         const tempDir = path.join(targetDir, ".dev-ag-kit-temp");
@@ -144,17 +148,16 @@ function updateAgentKit() {
             stdio: "ignore",
         });
 
-        // Copy new .agent folder
-        const sourceAgent = path.join(tempDir, AGENT_DIR);
-        if (fs.existsSync(sourceAgent)) {
-            fs.cpSync(sourceAgent, agentPath, { recursive: true });
+        if (fs.existsSync(path.join(tempDir, AGENT_DIR))) {
+            removeInstalledAssets(targetDir);
+            installAssets(tempDir, targetDir);
             console.log("✅ Updated successfully!");
 
             // Remove backup
             fs.rmSync(backupPath, { recursive: true, force: true });
         } else {
             // Restore backup on failure
-            fs.renameSync(backupPath, agentPath);
+            restoreInstalledAssets(backupPath, targetDir);
             throw new Error(".agent folder not found in repository");
         }
 
@@ -164,6 +167,53 @@ function updateAgentKit() {
         console.error("❌ Update failed:", error.message);
         process.exit(1);
     }
+}
+
+function installAssets(sourceRoot, targetDir) {
+    for (const relativePath of INSTALL_PATHS) {
+        const sourcePath = path.join(sourceRoot, relativePath);
+        const targetPath = path.join(targetDir, relativePath);
+
+        if (!fs.existsSync(sourcePath)) {
+            continue;
+        }
+
+        fs.cpSync(sourcePath, targetPath, { recursive: true });
+    }
+}
+
+function removeInstalledAssets(targetDir) {
+    for (const relativePath of INSTALL_PATHS) {
+        fs.rmSync(path.join(targetDir, relativePath), {
+            recursive: true,
+            force: true,
+        });
+    }
+}
+
+function backupInstalledAssets(targetDir, backupDir) {
+    for (const relativePath of INSTALL_PATHS) {
+        const sourcePath = path.join(targetDir, relativePath);
+        const backupPath = path.join(backupDir, relativePath);
+
+        if (!fs.existsSync(sourcePath)) {
+            continue;
+        }
+
+        fs.cpSync(sourcePath, backupPath, { recursive: true });
+    }
+}
+
+function restoreInstalledAssets(backupDir, targetDir) {
+    removeInstalledAssets(targetDir);
+    installAssets(backupDir, targetDir);
+}
+
+function resetDir(dirPath) {
+    if (fs.existsSync(dirPath)) {
+        fs.rmSync(dirPath, { recursive: true, force: true });
+    }
+    fs.mkdirSync(dirPath, { recursive: true });
 }
 
 function checkStatus() {
