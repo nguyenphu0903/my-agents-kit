@@ -1,167 +1,181 @@
 # AI Agent Kit
 
-> Golang-focused AI Agent Kit for Backend Development
+Golang-focused agent kit for backend-heavy projects, packaged as a reusable `.agent` workspace that can be installed into other repositories.
 
-Specialized agents and skills for **Go**, **Kafka**, **NATS**, **Redis**, and distributed systems. Full-stack support for Node.js, Python, Next.js, React, Kubernetes, and more.
+It combines specialist agents, reusable skills, and slash-style workflows for Go, distributed systems, APIs, infrastructure, security, frontend work, and review-driven delivery.
 
-## Quick Install
+## What This Repo Contains
 
-Install directly from this GitHub repo:
+- `21` specialist agents in `.agent/agents`
+- `52` skills in `.agent/skills`
+- `13` workflows in `.agent/workflows`
+- a small CLI in `bin/cli.js` for `init`, `update`, and `status`
+
+## Focus Areas
+
+- Go backend engineering
+- Kafka, NATS, Redis, caching, and distributed systems
+- API design and backend architecture
+- Testing, debugging, and verification workflows
+- Deployment, Docker, and production hardening
+- Frontend, mobile, and UI review support when a project needs full-stack coverage
+
+## Install
+
+### Option 1: Install from this GitHub repo
 
 ```bash
 npm install -g github:nguyenphu0903/my-agents-kit
 dev-ag-kit init
 ```
 
-Or run without global install:
-
-```bash
-npx github:nguyenphu0903/my-agents-kit init
-```
-
-For local development in this repo:
+### Option 2: Local development in this repo
 
 ```bash
 npm link
 dev-ag-kit init
 ```
 
-If your `npx` or `npm` commands fail with permission errors on `~/.npm`, fix ownership first:
+### Option 3: Existing published npm package
+
+The package name is still:
+
+```bash
+npm install -g @duyphu/dev-ag-kit
+dev-ag-kit init
+```
+
+### If npm or npx fails with permissions
 
 ```bash
 sudo chown -R $(id -u):$(id -g) ~/.npm
 ```
 
-If you are still using the published npm package, this also works:
+## CLI Behavior
 
-```bash
-npx @duyphu/dev-ag-kit init
-```
+The CLI currently supports:
 
-This installs the `.agent` folder containing all templates into your project.
+- `dev-ag-kit init`
+- `dev-ag-kit update`
+- `dev-ag-kit status`
 
-## What's Included
+Current behavior is intentionally simple:
 
-| Component     | Count | Description                                                                |
-| ------------- | ----- | -------------------------------------------------------------------------- |
-| **Agents**    | 15+   | Specialist AI personas (Golang, backend, frontend, security, etc.)         |
-| **Skills**    | 52    | Domain and workflow skills (Golang, Kafka, NATS, Redis, review, execution) |
-| **Workflows** | 13    | Slash command procedures                                                   |
+- commands run against the current working directory
+- `init` copies the local `.agent` folder when running from a linked/dev install
+- otherwise it clones the GitHub repo and copies `.agent`
+- `update` replaces the existing `.agent` folder with the latest version from the configured repo
 
-## Structure
+The README only documents behavior that is actually implemented in `bin/cli.js`.
+
+## Quick Start
+
+After installation in a target project, the kit adds a `.agent` directory with:
 
 ```text
 .agent/
-├── agents/          # Specialist Agents (golang-specialist, backend-specialist, etc.)
-├── skills/          # Skills (golang-patterns, message-broker-patterns, etc.)
-├── workflows/       # Slash Commands
-├── rules/           # Workspace Rules
-└── ARCHITECTURE.md  # Full documentation
+├── agents/
+├── skills/
+├── workflows/
+├── rules/
+├── scripts/
+└── ARCHITECTURE.md
 ```
 
-## Usage
-
-### Using Agents
-
-Mention an agent by name to invoke specialized expertise:
+Typical usage examples:
 
 ```text
-Use the golang-specialist to review this Go code
+Use the golang-specialist to review this Go service
 Use the backend-specialist to design this API
 Use the security-auditor to review authentication
+/brainstorm event-driven architecture for payments
+/plan add audit logging
+/execute-plan docs/PLAN-audit-logging.md
+/review before merge
 ```
 
-Or rely on automatic routing (Upstream Feature):
+## Included Agents
 
-> "Fix the dark mode button" -> 🤖 Using @frontend-specialist...
+The kit includes agents for:
 
-### Using Workflows
+- Go and distributed systems
+- backend/API work
+- frontend/UI work
+- database design
+- DevOps and deployment
+- testing and QA
+- security review and penetration testing
+- performance optimization
+- documentation
+- planning and orchestration
 
-Invoke workflows with slash commands:
+The full inventory lives in `.agent/ARCHITECTURE.md`.
 
-| Command          | Description                           |
-| ---------------- | ------------------------------------- |
-| `/brainstorm`    | Explore options before implementation |
-| `/create`        | Create new feature or app             |
-| `/debug`         | Systematic debugging                  |
-| `/deploy`        | Deploy application                    |
-| `/enhance`       | Improve existing code                 |
-| `/execute-plan`  | Execute a written implementation plan |
-| `/orchestrate`   | Multi-agent coordination              |
-| `/plan`          | Create task breakdown                 |
-| `/preview`       | Preview changes locally               |
-| `/review`        | Review changes before merge           |
-| `/status`        | Check project status                  |
-| `/test`          | Generate and run tests                |
-| `/ui-ux-pro-max` | Design with 50 styles                 |
+## Included Workflows
 
-Example:
+Available workflows:
 
-```text
-/brainstorm authentication system
-/create landing page with hero section
-/debug why login fails
-```
+- `/brainstorm`
+- `/create`
+- `/debug`
+- `/deploy`
+- `/enhance`
+- `/execute-plan`
+- `/orchestrate`
+- `/plan`
+- `/preview`
+- `/review`
+- `/status`
+- `/test`
+- `/ui-ux-pro-max`
 
-### Using Rules
+## Go-Specific Strength
 
-Rules in `.agent/rules/` are automatically applied. The main configuration file is `GEMINI.md`.
+The strongest part of this kit is the Go stack:
 
-## CLI Tool
+- `.agent/agents/golang-specialist.md`
+- `.agent/skills/golang-patterns`
+- `.agent/skills/message-broker-patterns`
+- `.agent/skills/caching-patterns`
 
-| Command             | Description                               |
-| ------------------- | ----------------------------------------- |
-| `dev-ag-kit init`   | Install `.agent` folder into your project |
-| `dev-ag-kit update` | Update to the latest version              |
-| `dev-ag-kit status` | Check installation status                 |
+Recent updates include Go 1.26 guidance for:
 
-### Update
+- Green Tea GC as default
+- `go fix` modernizers
+- safer reverse proxy migration guidance
+- runtime and deployment updates
+- TLS and test-artifact recommendations
 
-If `dev-ag-kit` is already installed globally:
+## Compatibility Notes
+
+This repo is primarily a content kit built around a `.agent` folder.
+
+That means:
+
+- it works well as a shared source of truth for your own agent setup
+- some IDEs and agent runtimes may need adapter files like `AGENTS.md`, root `GEMINI.md`, or tool-specific folders to auto-discover instructions
+- the current CLI installs `.agent`, not a full multi-runtime adapter layer
+
+## Repo Notes
+
+- GitHub repo: [nguyenphu0903/my-agents-kit](https://github.com/nguyenphu0903/my-agents-kit)
+- current package name: `@duyphu/dev-ag-kit`
+- CLI binary name: `dev-ag-kit`
+
+The naming is functional today, but repo name and package name are not fully aligned yet.
+
+## Development
+
+Useful local commands:
 
 ```bash
-dev-ag-kit update
+npm link
+npm pack --dry-run
+node bin/cli.js status
 ```
 
-If you installed from GitHub and want the latest CLI version too:
-
-```bash
-npm install -g github:nguyenphu0903/my-agents-kit
-```
-
-If you installed from npm:
-
-```bash
-npm install -g @duyphu/dev-ag-kit
-```
-
-### Notes
-
-- `dev-ag-kit` only works directly after global install or `npm link`
-- `init`, `update`, and `status` currently run in the current working directory
-- The README previously listed extra CLI flags; those are not implemented and were removed from the docs
-
-## Key Features
-
-### 🎯 Golang Specialist (Exclusive)
-
-- **Senior Mastery**: Architecture, API Design, Error Handling
-- **Performance**: Profiling, Go 1.26 GC/runtime tuning, Memory Management
-- **Deployment**: Distroless, Non-root security
-- **Ecosystem**: Kafka, NATS, Redis, NoSQL
-
-### 🤖 MCP 2026 Support (Exclusive)
-
-- **Advanced Patterns**: Bidirectional streaming, Stateful sessions
-- **Agentic**: Agent-to-Agent architecture
-
-### 🚀 Full-Stack Support
-
-- Backend: Node.js, Python, API design
-- Frontend: React, Next.js, Vue
-- DevOps: Kubernetes, Docker, CI/CD
-- Mobile: React Native, Flutter
+If you change `.agent`, re-run `npm pack --dry-run` before publishing so the packaged contents match expectations.
 
 ## License
 
-MIT © duyphu
+MIT. See `LICENSE`.

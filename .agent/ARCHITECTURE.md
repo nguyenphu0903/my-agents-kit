@@ -8,9 +8,9 @@
 
 AI Agent Kit is a modular system consisting of:
 
-- **19 Specialist Agents** - Role-based AI personas (Golang, backend, frontend, security, etc.)
-- **45 Skills** - Domain-specific knowledge modules (including Go, Kafka, NATS, Redis, NoSQL, MCP)
-- **11 Workflows** - Slash command procedures
+- **21 Specialist Agents** - Role-based AI personas (Golang, backend, frontend, security, etc.)
+- **52 Skills** - Domain and workflow knowledge modules (including Go, Kafka, NATS, Redis, review, execution, MCP)
+- **13 Workflows** - Slash command procedures
 
 ---
 
@@ -28,7 +28,7 @@ AI Agent Kit is a modular system consisting of:
 
 ---
 
-## 🤖 Agents (19)
+## 🤖 Agents (21)
 
 Specialist AI personas for different domains.
 
@@ -41,6 +41,7 @@ Specialist AI personas for different domains.
 | `backend-specialist`     | API, business logic                 | api-patterns, nodejs-best-practices, database-design                            |
 | `database-architect`     | Schema, SQL                         | database-design, prisma-expert                                                  |
 | `mobile-developer`       | iOS, Android, RN                    | mobile-design                                                                   |
+| `game-developer`         | Game systems and gameplay loops     | clean-code                                                                      |
 | `devops-engineer`        | CI/CD, Docker                       | deployment-procedures, docker-expert                                            |
 | `security-auditor`       | Security compliance                 | vulnerability-scanner, red-team-tactics                                         |
 | `penetration-tester`     | Offensive security                  | red-team-tactics                                                                |
@@ -57,7 +58,7 @@ Specialist AI personas for different domains.
 
 ---
 
-## 🧩 Skills (45)
+## 🧩 Skills (52)
 
 Modular knowledge domains that agents can load on-demand.
 
@@ -118,6 +119,9 @@ Modular knowledge domains that agents can load on-demand.
 | `tdd-workflow`          | Test-driven development  |
 | `code-review-checklist` | Code review standards    |
 | `lint-and-validate`     | Linting, validation      |
+| `verification-before-completion` | Evidence-based completion checks |
+| `requesting-code-review` | Review request workflow |
+| `receiving-code-review` | Review response workflow |
 
 ### Security
 
@@ -134,6 +138,9 @@ Modular knowledge domains that agents can load on-demand.
 | `architecture`  | System design patterns, Clean Architecture, ADRs |
 | `plan-writing`  | Task planning, breakdown                         |
 | `brainstorming` | Socratic questioning                             |
+| `executing-plans` | Methodical implementation from a written plan  |
+| `using-git-worktrees` | Isolated workspace setup for feature work |
+| `writing-skills` | Authoring and refining reusable skills         |
 
 ### Mobile
 
@@ -166,10 +173,11 @@ Modular knowledge domains that agents can load on-demand.
 | `i18n-localization`       | Internationalization                      |
 | `performance-profiling`   | Web Vitals, optimization                  |
 | `systematic-debugging`    | Troubleshooting                           |
+| `finishing-a-development-branch` | Branch completion workflow         |
 
 ---
 
-## 🔄 Workflows (11)
+## 🔄 Workflows (13)
 
 Slash command procedures. Invoke with `/command`.
 
@@ -180,9 +188,11 @@ Slash command procedures. Invoke with `/command`.
 | `/debug`         | Debug issues             |
 | `/deploy`        | Deploy application       |
 | `/enhance`       | Improve existing code    |
+| `/execute-plan`  | Execute a written plan   |
 | `/orchestrate`   | Multi-agent coordination |
 | `/plan`          | Task breakdown           |
 | `/preview`       | Preview changes          |
+| `/review`        | Review changes           |
 | `/status`        | Check project status     |
 | `/test`          | Run tests                |
 | `/ui-ux-pro-max` | Design with 50 styles    |
