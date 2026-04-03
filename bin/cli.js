@@ -4,7 +4,7 @@
  * my-agents-kit CLI
  * my-agents-kit
  *
- * Install .my-agents-kit into your project
+ * Install .agent into your project
  */
 
 const { execSync } = require("child_process");
@@ -12,7 +12,7 @@ const fs = require("fs");
 const path = require("path");
 
 const REPO_URL = "https://github.com/nguyenphu0903/my-agents-kit.git";
-const KIT_DIR = ".my-agents-kit";
+const KIT_DIR = ".agent";
 const COPILOT_AGENTS_DIR = path.join(".github", "agents");
 const INSTALL_PATHS = [KIT_DIR];
 
@@ -45,7 +45,7 @@ function initAgentKit(options) {
     const shouldGenerateCopilotAgents = options.has("--copilot");
 
     if (fs.existsSync(kitPath)) {
-        console.log("⚠️  .my-agents-kit folder already exists!");
+        console.log("⚠️  .agent folder already exists!");
         console.log('Use --force to overwrite or run "my-agents-kit update"');
         process.exit(1);
     }
@@ -77,14 +77,14 @@ function initAgentKit(options) {
                 }
                 console.log("✅ my-agents-kit installed successfully!");
             } else {
-                throw new Error(".my-agents-kit folder not found in repository");
+                throw new Error(".agent folder not found in repository");
             }
 
             // Cleanup
             fs.rmSync(tempDir, { recursive: true, force: true });
         }
 
-        // Auto-exclude .my-agents-kit from git (if git repo exists)
+        // Auto-exclude .agent from git (if git repo exists)
         const gitExcludePath = path.join(targetDir, ".git", "info", "exclude");
         if (fs.existsSync(path.join(targetDir, ".git"))) {
             try {
@@ -93,18 +93,29 @@ function initAgentKit(options) {
                     excludeContent = fs.readFileSync(gitExcludePath, "utf8");
                 }
 
-                // Add .my-agents-kit to exclude if not already there
-                if (!excludeContent.includes(".my-agents-kit")) {
-                    excludeContent += "\n# my-agents-kit\n.my-agents-kit/\n";
+                // Add .agent to exclude if not already there
+                if (!excludeContent.includes(".agent")) {
+                    excludeContent += "\n# my-agents-kit\n.agent/\n";
                     fs.writeFileSync(gitExcludePath, excludeContent);
                     console.log(
-                        "✅ Added .my-agents-kit to git exclude (local only)",
+                        "✅ Added .agent to git exclude (local only)",
+                    );
+                }
+
+                if (
+                    shouldGenerateCopilotAgents &&
+                    !excludeContent.includes(".github/agents")
+                ) {
+                    excludeContent += ".github/agents/\n";
+                    fs.writeFileSync(gitExcludePath, excludeContent);
+                    console.log(
+                        "✅ Added .github/agents to git exclude (local only)",
                     );
                 }
             } catch (err) {
                 // Silently fail if can't write to git exclude
                 console.log(
-                    '⚠️  Could not auto-exclude from git (run manually: echo ".my-agents-kit/" >> .git/info/exclude)',
+                    '⚠️  Could not auto-exclude from git (run manually: add ".agent/" and ".github/agents/" to .git/info/exclude)',
                 );
             }
         }
@@ -135,14 +146,14 @@ function updateAgentKit(options) {
 
     if (!fs.existsSync(kitPath)) {
         console.log(
-            '⚠️  .my-agents-kit folder not found. Run "my-agents-kit init" first.',
+            '⚠️  .agent folder not found. Run "my-agents-kit init" first.',
         );
         process.exit(1);
     }
 
     try {
         // Backup existing installed assets
-        const backupPath = path.join(targetDir, ".my-agents-kit.backup");
+        const backupPath = path.join(targetDir, ".agent.backup");
         resetDir(backupPath);
         backupInstalledAssets(targetDir, backupPath);
 
@@ -167,7 +178,7 @@ function updateAgentKit(options) {
         } else {
             // Restore backup on failure
             restoreInstalledAssets(backupPath, targetDir);
-            throw new Error(".my-agents-kit folder not found in repository");
+            throw new Error(".agent folder not found in repository");
         }
 
         // Cleanup

@@ -11,9 +11,9 @@
 ## Architecture
 
 - This repository is a distributable AI agent kit, not an application runtime.
-- The main source of truth is the `.my-agents-kit/` directory, which contains agents, skills, workflows, and rules.
-- Treat `.my-agents-kit/rules/GEMINI.md` as the authoritative runtime protocol for agent behavior in this repo.
-- Keep the documentation in `README.md` and `.my-agents-kit/ARCHITECTURE.md` aligned with any changes to shipped agents, skills, or workflows.
+- The main source of truth is the `.agent/` directory, which contains agents, skills, workflows, and rules.
+- Treat `.agent/rules/GEMINI.md` as the authoritative runtime protocol for agent behavior in this repo.
+- Keep the documentation in `README.md` and `.agent/ARCHITECTURE.md` aligned with any changes to shipped agents, skills, or workflows.
 - When adding or updating customization assets, preserve the existing directory organization and naming conventions.
 
 ## Build and Test
@@ -24,7 +24,7 @@
 
 ## Conventions
 
-- `.my-agents-kit/` remains the canonical source of truth even when adapter files such as `AGENTS.md`, `GEMINI.md`, `CLAUDE.md`, `.claude/commands/`, or `.cursor/rules/` are present.
+- `.agent/` remains the canonical source of truth even when adapter files such as `AGENTS.md`, `GEMINI.md`, `CLAUDE.md`, `.claude/commands/`, or `.cursor/rules/` are present.
 - Keep workspace guidance minimal and relevant to all tasks.
 - Add narrower `.instructions.md` files only when a rule applies to a specific folder or file pattern.
 - When introducing a new agent, skill, or workflow, update the relevant docs and keep frontmatter names aligned with filenames.

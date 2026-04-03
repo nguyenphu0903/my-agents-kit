@@ -1,15 +1,15 @@
 # my-agents-kit
 
-Golang-focused agent kit for backend-heavy projects, packaged as a reusable `.my-agents-kit` workspace that stays contained in one hidden folder.
+Golang-focused agent kit for backend-heavy projects, packaged as a reusable `.agent` workspace that stays compatible with existing agent runtimes.
 
 It combines specialist agents, reusable skills, and slash-style workflows for Go, distributed systems, APIs, infrastructure, security, frontend work, and review-driven delivery.
 
 ## What This Repo Contains
 
-- `21` specialist agents in `.my-agents-kit/agents`
-- `52` skills in `.my-agents-kit/skills`
-- `13` workflows in `.my-agents-kit/workflows`
-- adapter templates in `.my-agents-kit/adapters`
+- `21` specialist agents in `.agent/agents`
+- `52` skills in `.agent/skills`
+- `13` workflows in `.agent/workflows`
+- adapter templates in `.agent/adapters`
 - a small CLI in `bin/cli.js` for `init`, `update`, and `status`
 
 ## Focus Areas
@@ -28,7 +28,6 @@ It combines specialist agents, reusable skills, and slash-style workflows for Go
 ```bash
 npm install -g github:nguyenphu0903/my-agents-kit
 my-agents-kit init
-my-agents-kit init --copilot
 ```
 
 ### Option 2: Local development in this repo
@@ -36,6 +35,13 @@ my-agents-kit init --copilot
 ```bash
 npm link
 my-agents-kit init
+```
+
+### Optional: Enable GitHub Copilot agents for the current repo
+
+Run this only if you want Copilot custom agents in the current project:
+
+```bash
 my-agents-kit init --copilot
 ```
 
@@ -60,8 +66,9 @@ Current behavior is intentionally simple:
 - commands run against the current working directory
 - `init` copies the local kit files when running from a linked/dev install
 - otherwise it clones the GitHub repo and installs the kit into the current project
-- `init` and `update` only manage `.my-agents-kit/`, so the repo root stays clean by default
-- `init --copilot` and `update --copilot` auto-generate GitHub Copilot custom agent files in `.github/agents/*.agent.md` from `.my-agents-kit/agents/*.md`
+- `init` and `update` only manage `.agent/`
+- `init --copilot` and `update --copilot` auto-generate GitHub Copilot custom agent files in `.github/agents/*.agent.md` from `.agent/agents/*.md`
+- when `--copilot` is used inside a git repo, the CLI also adds `.agent/` and `.github/agents/` to `.git/info/exclude` so the generated files stay local by default
 - plain `init` and `update` do not touch `.github/agents`
 - `update --copilot` regenerates only the kit-generated Copilot agents and does not wipe unrelated custom agents
 
@@ -69,10 +76,10 @@ The README only documents behavior that is actually implemented in `bin/cli.js`.
 
 ## Quick Start
 
-After installation in a target project, the kit adds a `.my-agents-kit` directory with:
+After installation in a target project, the kit adds a `.agent` directory with:
 
 ```text
-.my-agents-kit/
+.agent/
 ├── adapters/
 ├── agents/
 ├── skills/
@@ -82,7 +89,13 @@ After installation in a target project, the kit adds a `.my-agents-kit` director
 └── ARCHITECTURE.md
 ```
 
-If you pass `--copilot`, it also generates:
+If you want GitHub Copilot support for the current repo, run:
+
+```bash
+my-agents-kit init --copilot
+```
+
+That optional step also generates:
 
 ```text
 .github/agents/
@@ -119,7 +132,7 @@ The kit includes agents for:
 - documentation
 - planning and orchestration
 
-The full inventory lives in `.my-agents-kit/ARCHITECTURE.md`.
+The full inventory lives in `.agent/ARCHITECTURE.md`.
 
 ## Included Workflows
 
@@ -141,10 +154,11 @@ Available workflows:
 
 ## IDE Compatibility
 
-This kit keeps cross-IDE adapter templates inside `.my-agents-kit/adapters`, but does not write them into the repo root by default.
+This kit keeps cross-IDE adapter templates inside `.agent/adapters`, but does not write them into the repo root by default.
 
-- GitHub Copilot: `init --copilot` and `update --copilot` generate `.github/agents/*.agent.md` from `.my-agents-kit/agents/*.md`, so Copilot-compatible custom agents are created inside the target repo only when requested.
-- Gemini, Claude, Cursor, and Windsurf: templates live under `.my-agents-kit/adapters/` so the kit stays self-contained and does not spill hidden config folders into the project root.
+- GitHub Copilot: `init --copilot` and `update --copilot` generate `.github/agents/*.agent.md` from `.agent/agents/*.md`, so Copilot-compatible custom agents are created inside the target repo only when requested.
+- Generated Copilot agent files are excluded locally through `.git/info/exclude`, so they do not get picked up by git status unless you explicitly override that behavior.
+- Gemini, Claude, Cursor, and Windsurf: templates live under `.agent/adapters/` so the kit stays self-contained and does not spill hidden config folders into the project root.
 
 If GitHub Copilot does not show the custom agent, check these first:
 
@@ -157,10 +171,10 @@ If GitHub Copilot does not show the custom agent, check these first:
 
 The strongest part of this kit is the Go stack:
 
-- `.my-agents-kit/agents/golang-specialist.md`
-- `.my-agents-kit/skills/golang-patterns`
-- `.my-agents-kit/skills/message-broker-patterns`
-- `.my-agents-kit/skills/caching-patterns`
+- `.agent/agents/golang-specialist.md`
+- `.agent/skills/golang-patterns`
+- `.agent/skills/message-broker-patterns`
+- `.agent/skills/caching-patterns`
 
 Recent updates include Go 1.26 guidance for:
 
@@ -172,13 +186,13 @@ Recent updates include Go 1.26 guidance for:
 
 ## Compatibility Notes
 
-This repo is primarily a content kit built around a `.my-agents-kit` folder.
+This repo is primarily a content kit built around a `.agent` folder.
 
 That means:
 
 - it works well as a shared source of truth for your own agent setup
-- the repo keeps IDE adapter templates inside `.my-agents-kit/adapters/`
-- `.my-agents-kit/` remains the canonical source of truth
+- the repo keeps IDE adapter templates inside `.agent/adapters/`
+- `.agent/` remains the canonical source of truth
 
 ## Repo Notes
 
@@ -197,7 +211,7 @@ npm pack --dry-run
 node bin/cli.js status
 ```
 
-If you change `.my-agents-kit`, re-run `npm pack --dry-run` before publishing so the packaged contents match expectations.
+If you change `.agent`, re-run `npm pack --dry-run` before publishing so the packaged contents match expectations.
 
 ## License
 

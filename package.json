@@ -32,7 +32,7 @@
     "dev-ag-kit": "./bin/cli.js"
   },
   "files": [
-    ".my-agents-kit",
+    ".agent",
     "bin",
     "README.md",
     "LICENSE"
