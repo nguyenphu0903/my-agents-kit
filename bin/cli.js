@@ -61,7 +61,7 @@ function initAgentKit(options) {
             if (shouldGenerateCopilotAgents) {
                 generateCopilotAgents(targetDir);
             }
-            console.log("✅ Agent kit installed successfully!");
+            console.log("✅ my-agents-kit installed successfully!");
         } else {
             // Production mode: clone from GitHub
             const tempDir = path.join(targetDir, ".my-agents-kit-temp");
@@ -157,6 +157,7 @@ function updateAgentKit(options) {
             removeInstalledAssets(targetDir);
             installAssets(tempDir, targetDir);
             if (shouldGenerateCopilotAgents) {
+                removeGeneratedCopilotAgents(targetDir);
                 generateCopilotAgents(targetDir);
             }
             console.log("✅ Updated successfully!");
@@ -198,7 +199,7 @@ function generateCopilotAgents(targetDir) {
     }
 
     const targetAgentsDir = path.join(targetDir, COPILOT_AGENTS_DIR);
-    resetDir(targetAgentsDir);
+    fs.mkdirSync(targetAgentsDir, { recursive: true });
 
     const agentFiles = fs
         .readdirSync(sourceAgentsDir)
@@ -275,7 +276,6 @@ function removeInstalledAssets(targetDir) {
             force: true,
         });
     }
-    removeGeneratedCopilotAgents(targetDir);
 }
 
 function backupInstalledAssets(targetDir, backupDir) {
