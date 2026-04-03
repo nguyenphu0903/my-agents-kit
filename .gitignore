@@ -1,7 +1,8 @@
 node_modules/
 .DS_Store
 .dev-ag-kit-temp/
-.agent.backup/
+.my-agents-kit-temp/
+.my-agents-kit.backup/
 .worktrees/
 worktrees/
 *.log

@@ -1,0 +1,9 @@
+---
+description: Use when editing the Go-focused parts of the agent kit
+globs: .my-agents-kit/agents/golang-specialist.md,.my-agents-kit/skills/golang-patterns/**,README.md,.my-agents-kit/ARCHITECTURE.md
+alwaysApply: false
+---
+
+- The Go content in this repo should reflect Go 1.26 guidance.
+- When updating Go guidance, prefer official Go release notes and documentation.
+- Keep `golang-specialist`, `golang-patterns`, `README.md`, and `.my-agents-kit/ARCHITECTURE.md` in sync when the shipped Go guidance changes materially.

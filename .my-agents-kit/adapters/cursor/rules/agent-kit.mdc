@@ -1,0 +1,11 @@
+---
+description: Core project guidance for the AI Agent Kit repository
+alwaysApply: true
+---
+
+- This repository is a distributable agent kit, not an application runtime.
+- The source of truth is `.my-agents-kit/`.
+- Keep `README.md` and `.my-agents-kit/ARCHITECTURE.md` aligned with actual shipped contents.
+- If you change packaging or installation behavior, verify with `npm pack --dry-run`.
+- Keep IDE-specific adapter files thin and aligned with `.my-agents-kit/`.
+- Prefer updating existing agents, skills, and workflows over creating duplicate systems.

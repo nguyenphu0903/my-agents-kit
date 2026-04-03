@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * AI Agent Kit CLI
- * @duyphu/dev-ag-kit
+ * my-agents-kit CLI
+ * my-agents-kit
  *
- * Install .agent folder into your project
+ * Install .my-agents-kit into your project
  */
 
 const { execSync } = require("child_process");
@@ -12,16 +12,9 @@ const fs = require("fs");
 const path = require("path");
 
 const REPO_URL = "https://github.com/nguyenphu0903/my-agents-kit.git";
-const AGENT_DIR = ".agent";
+const KIT_DIR = ".my-agents-kit";
 const COPILOT_AGENTS_DIR = path.join(".github", "agents");
-const INSTALL_PATHS = [
-    ".agent",
-    "AGENTS.md",
-    "GEMINI.md",
-    "CLAUDE.md",
-    ".claude",
-    ".cursor",
-];
+const INSTALL_PATHS = [KIT_DIR];
 
 function main() {
     const args = process.argv.slice(2);
@@ -39,27 +32,27 @@ function main() {
             checkStatus();
             break;
         default:
-            console.log("Usage: dev-ag-kit [init|update|status] [--copilot]");
+            console.log("Usage: my-agents-kit [init|update|status] [--copilot]");
             process.exit(1);
     }
 }
 
 function initAgentKit(options) {
-    console.log("🚀 Installing AI Agent Kit...");
+    console.log("🚀 Installing my-agents-kit...");
 
     const targetDir = process.cwd();
-    const agentPath = path.join(targetDir, AGENT_DIR);
+    const kitPath = path.join(targetDir, KIT_DIR);
     const shouldGenerateCopilotAgents = options.has("--copilot");
 
-    if (fs.existsSync(agentPath)) {
-        console.log("⚠️  .agent folder already exists!");
-        console.log('Use --force to overwrite or run "dev-ag-kit update"');
+    if (fs.existsSync(kitPath)) {
+        console.log("⚠️  .my-agents-kit folder already exists!");
+        console.log('Use --force to overwrite or run "my-agents-kit update"');
         process.exit(1);
     }
 
     try {
         // Check if running in development mode (local testing)
-        const devSourcePath = path.join(__dirname, "..", AGENT_DIR);
+        const devSourcePath = path.join(__dirname, "..", KIT_DIR);
 
         if (fs.existsSync(devSourcePath)) {
             // Development mode: copy from local
@@ -71,27 +64,27 @@ function initAgentKit(options) {
             console.log("✅ Agent kit installed successfully!");
         } else {
             // Production mode: clone from GitHub
-            const tempDir = path.join(targetDir, ".dev-ag-kit-temp");
+            const tempDir = path.join(targetDir, ".my-agents-kit-temp");
             console.log("📦 Downloading latest version...");
             execSync(`git clone --depth 1 ${REPO_URL} ${tempDir}`, {
                 stdio: "ignore",
             });
 
-            if (fs.existsSync(path.join(tempDir, AGENT_DIR))) {
+            if (fs.existsSync(path.join(tempDir, KIT_DIR))) {
                 installAssets(tempDir, targetDir);
                 if (shouldGenerateCopilotAgents) {
                     generateCopilotAgents(targetDir);
                 }
-                console.log("✅ Agent kit installed successfully!");
+                console.log("✅ my-agents-kit installed successfully!");
             } else {
-                throw new Error(".agent folder not found in repository");
+                throw new Error(".my-agents-kit folder not found in repository");
             }
 
             // Cleanup
             fs.rmSync(tempDir, { recursive: true, force: true });
         }
 
-        // Auto-exclude .agent from git (if git repo exists)
+        // Auto-exclude .my-agents-kit from git (if git repo exists)
         const gitExcludePath = path.join(targetDir, ".git", "info", "exclude");
         if (fs.existsSync(path.join(targetDir, ".git"))) {
             try {
@@ -100,22 +93,24 @@ function initAgentKit(options) {
                     excludeContent = fs.readFileSync(gitExcludePath, "utf8");
                 }
 
-                // Add .agent to exclude if not already there
-                if (!excludeContent.includes(".agent")) {
-                    excludeContent += "\n# AI Agent Kit\n.agent/\n";
+                // Add .my-agents-kit to exclude if not already there
+                if (!excludeContent.includes(".my-agents-kit")) {
+                    excludeContent += "\n# my-agents-kit\n.my-agents-kit/\n";
                     fs.writeFileSync(gitExcludePath, excludeContent);
-                    console.log("✅ Added .agent to git exclude (local only)");
+                    console.log(
+                        "✅ Added .my-agents-kit to git exclude (local only)",
+                    );
                 }
             } catch (err) {
                 // Silently fail if can't write to git exclude
                 console.log(
-                    '⚠️  Could not auto-exclude from git (run manually: echo ".agent/" >> .git/info/exclude)',
+                    '⚠️  Could not auto-exclude from git (run manually: echo ".my-agents-kit/" >> .git/info/exclude)',
                 );
             }
         }
 
         console.log("");
-        console.log("🎯 AI Agent Kit is ready!");
+        console.log("🎯 my-agents-kit is ready!");
         console.log("");
         console.log("📚 Available agents:");
         console.log("  - golang-specialist (Go, Kafka, NATS, Redis)");
@@ -132,33 +127,33 @@ function initAgentKit(options) {
 }
 
 function updateAgentKit(options) {
-    console.log("🔄 Updating AI Agent Kit...");
+    console.log("🔄 Updating my-agents-kit...");
 
     const targetDir = process.cwd();
-    const agentPath = path.join(targetDir, AGENT_DIR);
+    const kitPath = path.join(targetDir, KIT_DIR);
     const shouldGenerateCopilotAgents = options.has("--copilot");
 
-    if (!fs.existsSync(agentPath)) {
+    if (!fs.existsSync(kitPath)) {
         console.log(
-            '⚠️  .agent folder not found. Run "dev-ag-kit init" first.',
+            '⚠️  .my-agents-kit folder not found. Run "my-agents-kit init" first.',
         );
         process.exit(1);
     }
 
     try {
         // Backup existing installed assets
-        const backupPath = path.join(targetDir, ".agent.backup");
+        const backupPath = path.join(targetDir, ".my-agents-kit.backup");
         resetDir(backupPath);
         backupInstalledAssets(targetDir, backupPath);
 
         // Download latest
-        const tempDir = path.join(targetDir, ".dev-ag-kit-temp");
+        const tempDir = path.join(targetDir, ".my-agents-kit-temp");
         console.log("📦 Downloading latest version...");
         execSync(`git clone --depth 1 ${REPO_URL} ${tempDir}`, {
             stdio: "ignore",
         });
 
-        if (fs.existsSync(path.join(tempDir, AGENT_DIR))) {
+        if (fs.existsSync(path.join(tempDir, KIT_DIR))) {
             removeInstalledAssets(targetDir);
             installAssets(tempDir, targetDir);
             if (shouldGenerateCopilotAgents) {
@@ -171,7 +166,7 @@ function updateAgentKit(options) {
         } else {
             // Restore backup on failure
             restoreInstalledAssets(backupPath, targetDir);
-            throw new Error(".agent folder not found in repository");
+            throw new Error(".my-agents-kit folder not found in repository");
         }
 
         // Cleanup
@@ -196,7 +191,7 @@ function installAssets(sourceRoot, targetDir) {
 }
 
 function generateCopilotAgents(targetDir) {
-    const sourceAgentsDir = path.join(targetDir, AGENT_DIR, "agents");
+    const sourceAgentsDir = path.join(targetDir, KIT_DIR, "agents");
 
     if (!fs.existsSync(sourceAgentsDir)) {
         return;
@@ -230,7 +225,7 @@ function toCopilotAgentMarkdown(sourceContent, fileName) {
     const name = frontmatter.name || fileName.replace(/\.md$/, "");
     const description =
         frontmatter.description ||
-        `Specialized agent generated from ${path.join(AGENT_DIR, "agents", fileName)}.`;
+        `Specialized agent generated from ${path.join(KIT_DIR, "agents", fileName)}.`;
 
     return `---
 name: ${name}
@@ -238,7 +233,7 @@ description: ${description}
 tools: [read, edit, search, execute]
 ---
 
-<!-- Generated by dev-ag-kit from ${path.join(AGENT_DIR, "agents", fileName)} -->
+<!-- Generated by my-agents-kit from ${path.join(KIT_DIR, "agents", fileName)} -->
 
 ${body.trim()}
 `;
@@ -309,7 +304,7 @@ function resetDir(dirPath) {
 }
 
 function removeGeneratedCopilotAgents(targetDir) {
-    const sourceAgentsDir = path.join(targetDir, AGENT_DIR, "agents");
+    const sourceAgentsDir = path.join(targetDir, KIT_DIR, "agents");
 
     if (!fs.existsSync(sourceAgentsDir)) {
         return;
@@ -339,17 +334,17 @@ function removeGeneratedCopilotAgents(targetDir) {
 
 function checkStatus() {
     const targetDir = process.cwd();
-    const agentPath = path.join(targetDir, AGENT_DIR);
+    const kitPath = path.join(targetDir, KIT_DIR);
 
-    console.log("📊 AI Agent Kit Status");
+    console.log("📊 my-agents-kit Status");
     console.log("");
 
-    if (fs.existsSync(agentPath)) {
+    if (fs.existsSync(kitPath)) {
         console.log("✅ Installed");
 
         // Count agents and skills
-        const agentsPath = path.join(agentPath, "agents");
-        const skillsPath = path.join(agentPath, "skills");
+        const agentsPath = path.join(kitPath, "agents");
+        const skillsPath = path.join(kitPath, "skills");
 
         if (fs.existsSync(agentsPath)) {
             const agents = fs
@@ -368,7 +363,7 @@ function checkStatus() {
         }
     } else {
         console.log("❌ Not installed");
-        console.log('   Run "dev-ag-kit init" to install');
+        console.log('   Run "my-agents-kit init" to install');
     }
 }
 
