@@ -32,7 +32,7 @@ function main() {
             checkStatus();
             break;
         default:
-            console.log("Usage: my-agents-kit [init|update|status] [--copilot]");
+            console.log("Usage: my-agents-kit [init|update|status]");
             process.exit(1);
     }
 }
@@ -42,7 +42,7 @@ function initAgentKit(options) {
 
     const targetDir = process.cwd();
     const kitPath = path.join(targetDir, KIT_DIR);
-    const shouldGenerateCopilotAgents = options.has("--copilot");
+    const shouldGenerateCopilotAgents = true;
 
     if (fs.existsSync(kitPath)) {
         console.log("⚠️  .agent folder already exists!");
@@ -125,7 +125,7 @@ function initAgentKit(options) {
         console.log("");
         console.log("📚 Available agents:");
         console.log("  - golang-specialist (Go, Kafka, NATS, Redis)");
-        console.log("  - backend-specialist (Node.js, Python, API)");
+        console.log("  - backend-specialist (Go, Node.js, Python, API)");
         console.log("  - frontend-specialist (React, Next.js, UI/UX)");
         console.log("  - mobile-developer (React Native, Flutter)");
         console.log("  - And 11 more...");
@@ -142,7 +142,7 @@ function updateAgentKit(options) {
 
     const targetDir = process.cwd();
     const kitPath = path.join(targetDir, KIT_DIR);
-    const shouldGenerateCopilotAgents = options.has("--copilot");
+    const shouldGenerateCopilotAgents = true;
 
     if (!fs.existsSync(kitPath)) {
         console.log(

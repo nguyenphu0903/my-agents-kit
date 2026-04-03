@@ -4,6 +4,15 @@ Golang-focused agent kit for backend-heavy projects, packaged as a reusable `.ag
 
 It combines specialist agents, reusable skills, and slash-style workflows for Go, distributed systems, APIs, infrastructure, security, frontend work, and review-driven delivery.
 
+## Overview
+
+`my-agents-kit` is a content-first agent kit.
+
+- The runtime source of truth is `.agent/`
+- The package and CLI name are `my-agents-kit`
+- GitHub Copilot support is generated automatically during install and update
+- Existing runtimes that already expect `.agent/` can keep working without renaming project folders
+
 ## What This Repo Contains
 
 - `21` specialist agents in `.agent/agents`
@@ -21,6 +30,15 @@ It combines specialist agents, reusable skills, and slash-style workflows for Go
 - Deployment, Docker, and production hardening
 - Frontend, mobile, and UI review support when a project needs full-stack coverage
 
+## Agent Routing
+
+The most important routing distinction in this kit is:
+
+- `backend-specialist`: general backend work across Go, Node.js, and Python
+- `golang-specialist`: deep Go-specific work such as concurrency, profiling, brokers, memory, and distributed systems
+
+Use `backend-specialist` for API and service work in general. Use `golang-specialist` when the work is specifically about Go internals, performance, or distributed backend design.
+
 ## Install
 
 ### Option 1: Install from this GitHub repo
@@ -37,12 +55,20 @@ npm link
 my-agents-kit init
 ```
 
-### Optional: Enable GitHub Copilot agents for the current repo
+### Upgrade from the old `dev-ag-kit` binary
 
-Run this only if you want Copilot custom agents in the current project:
+If your machine still has the older global binary, remove it first:
 
 ```bash
-my-agents-kit init --copilot
+npm uninstall -g @duyphu/dev-ag-kit
+npm install -g github:nguyenphu0903/my-agents-kit
+```
+
+If npm reports `EEXIST` for `/opt/homebrew/bin/dev-ag-kit`, remove that stale binary and reinstall:
+
+```bash
+rm /opt/homebrew/bin/dev-ag-kit
+npm install -g github:nguyenphu0903/my-agents-kit
 ```
 
 ### If npm or npx fails with permissions
@@ -56,9 +82,7 @@ sudo chown -R $(id -u):$(id -g) ~/.npm
 The CLI currently supports:
 
 - `my-agents-kit init`
-- `my-agents-kit init --copilot`
 - `my-agents-kit update`
-- `my-agents-kit update --copilot`
 - `my-agents-kit status`
 
 Current behavior is intentionally simple:
@@ -67,10 +91,9 @@ Current behavior is intentionally simple:
 - `init` copies the local kit files when running from a linked/dev install
 - otherwise it clones the GitHub repo and installs the kit into the current project
 - `init` and `update` only manage `.agent/`
-- `init --copilot` and `update --copilot` auto-generate GitHub Copilot custom agent files in `.github/agents/*.agent.md` from `.agent/agents/*.md`
-- when `--copilot` is used inside a git repo, the CLI also adds `.agent/` and `.github/agents/` to `.git/info/exclude` so the generated files stay local by default
-- plain `init` and `update` do not touch `.github/agents`
-- `update --copilot` regenerates only the kit-generated Copilot agents and does not wipe unrelated custom agents
+- `init` and `update` auto-generate GitHub Copilot custom agent files in `.github/agents/*.agent.md` from `.agent/agents/*.md`
+- when running inside a git repo, the CLI also adds `.agent/` and `.github/agents/` to `.git/info/exclude` so the generated files stay local by default
+- `update` regenerates only the kit-generated Copilot agents and does not wipe unrelated custom agents
 
 The README only documents behavior that is actually implemented in `bin/cli.js`.
 
@@ -89,13 +112,14 @@ After installation in a target project, the kit adds a `.agent` directory with:
 └── ARCHITECTURE.md
 ```
 
-If you want GitHub Copilot support for the current repo, run:
+The `adapters/` folder stores thin runtime templates for:
 
-```bash
-my-agents-kit init --copilot
-```
+- Gemini
+- Claude-style command files
+- Cursor rules
+- Windsurf rules
 
-That optional step also generates:
+The install also generates:
 
 ```text
 .github/agents/
@@ -122,7 +146,7 @@ Use the security-auditor to review authentication
 The kit includes agents for:
 
 - Go and distributed systems
-- backend/API work
+- backend/API work across Go, Node.js, and Python
 - frontend/UI work
 - database design
 - DevOps and deployment
@@ -156,7 +180,7 @@ Available workflows:
 
 This kit keeps cross-IDE adapter templates inside `.agent/adapters`, but does not write them into the repo root by default.
 
-- GitHub Copilot: `init --copilot` and `update --copilot` generate `.github/agents/*.agent.md` from `.agent/agents/*.md`, so Copilot-compatible custom agents are created inside the target repo only when requested.
+- GitHub Copilot: `init` and `update` generate `.github/agents/*.agent.md` from `.agent/agents/*.md`, so Copilot-compatible custom agents are available immediately after install.
 - Generated Copilot agent files are excluded locally through `.git/info/exclude`, so they do not get picked up by git status unless you explicitly override that behavior.
 - Gemini, Claude, Cursor, and Windsurf: templates live under `.agent/adapters/` so the kit stays self-contained and does not spill hidden config folders into the project root.
 
@@ -164,7 +188,7 @@ If GitHub Copilot does not show the custom agent, check these first:
 
 - the client version actually supports custom agents
 - the repository contains `.github/agents/*.agent.md`
-- `my-agents-kit init --copilot` or `my-agents-kit update --copilot` has already been run in that repo
+- `my-agents-kit init` or `my-agents-kit update` has already been run in that repo
 - the workspace has been reloaded after installing or updating the kit
 
 ## Go-Specific Strength

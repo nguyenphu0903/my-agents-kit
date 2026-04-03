@@ -38,7 +38,7 @@ Specialist AI personas for different domains.
 | `project-planner`        | Discovery, task planning            | brainstorming, plan-writing, architecture                                       |
 | `golang-specialist`      | **Go backend, distributed systems** | **golang-patterns, message-broker-patterns, caching-patterns, database-design** |
 | `frontend-specialist`    | Web UI/UX                           | frontend-design, nextjs-react-expert, tailwind-patterns                         |
-| `backend-specialist`     | API, business logic                 | api-patterns, nodejs-best-practices, database-design                            |
+| `backend-specialist`     | Go, API, business logic            | golang-patterns, api-patterns, nodejs-best-practices, database-design           |
 | `database-architect`     | Schema, SQL                         | database-design, prisma-expert                                                  |
 | `mobile-developer`       | iOS, Android, RN                    | mobile-design                                                                   |
 | `game-developer`         | Game systems and gameplay loops     | clean-code                                                                      |
