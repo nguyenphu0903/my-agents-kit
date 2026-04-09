@@ -55,6 +55,14 @@ npm link
 my-agents-kit init
 ```
 
+### Global install for the current machine
+
+```bash
+my-agents-kit init --global
+```
+
+This writes only the provider that is detected on the machine, unless you override it with `--all` or `--provider=`.
+
 ### Upgrade from the old `dev-ag-kit` binary
 
 If your machine still has the older global binary, remove it first:
@@ -84,18 +92,23 @@ The CLI currently supports:
 - `my-agents-kit init`
 - `my-agents-kit update`
 - `my-agents-kit status`
+- add `--global` to initialize or update machine-wide Copilot/OpenCode customizations
+- add `--provider=copilot|opencode|claude|gemini` to force a provider
+- add `--all` to publish every supported provider
 
 Current behavior is intentionally simple:
 
 - commands run against the current working directory
 - `init` copies the local kit files when running from a linked/dev install
 - otherwise it clones the GitHub repo and installs the kit into the current project
-- `init` and `update` manage `.agent/` and publish always-on instruction adapters
-- `init` and `update` auto-generate GitHub Copilot custom agent files in `.github/agents/*.agent.md` from `.agent/agents/*.md`
-- `init` and `update` auto-generate OpenCode assets in `.opencode/agents/*.md` and `.opencode/skills/*/SKILL.md` from `.agent`
-- `init` and `update` publish these adapter files when they do not already exist, or refresh them when they are kit-managed: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md`
-- when running inside a git repo, the CLI also adds `.agent/`, `.github/agents/`, `.opencode/`, `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` to `.git/info/exclude` so generated files stay local by default
-- `update` regenerates only the kit-generated Copilot agents and does not wipe unrelated custom agents
+- `init` and `update` auto-detect the active provider and publish only that provider by default
+- `--provider=` and `--all` override the auto-detect behavior
+- `--global` publishes machine-wide assets for the detected provider
+- `copilot` publishes `.github/copilot-instructions.md` and `.github/agents/*.agent.md`
+- `opencode` publishes `AGENTS.md`, `.opencode/agents/*.md`, and `.opencode/skills/*/SKILL.md`
+- `claude` publishes `CLAUDE.md` and `.claude/commands/*.md`
+- `gemini` publishes `GEMINI.md`
+- when running inside a git repo, the CLI also adds only the generated paths for the selected provider to `.git/info/exclude`
 
 The README only documents behavior that is actually implemented in `bin/cli.js`.
 
@@ -195,14 +208,14 @@ Available workflows:
 
 ## IDE Compatibility
 
-This kit keeps cross-IDE adapter templates inside `.agent/adapters` as canonical templates, and publishes selected files into standard runtime locations during install/update.
+This kit keeps cross-IDE adapter templates inside `.agent/adapters` as canonical templates, and publishes only the detected provider’s files during install/update unless you override it.
 
-- GitHub Copilot: `init` and `update` generate `.github/agents/*.agent.md` from `.agent/agents/*.md`, and publish `.github/copilot-instructions.md` and `AGENTS.md` for always-on instructions.
+- GitHub Copilot: `init` and `update` generate `.github/agents/*.agent.md` and `.github/copilot-instructions.md`.
 - Generated Copilot agent files are excluded locally through `.git/info/exclude`, so they do not get picked up by git status unless you explicitly override that behavior.
-- OpenCode: `init` and `update` publish native `.opencode/agents/*.md` and `.opencode/skills/*/SKILL.md`, so OpenCode can discover both subagents and skill definitions directly.
-- Gemini: `init` and `update` publish `GEMINI.md` in project root so Gemini CLI can auto-load context from workspace hierarchy.
-- Claude: `init` and `update` publish `CLAUDE.md` in project root for Claude-compatible tools.
-- Cursor and Windsurf: templates still live under `.agent/adapters/` and are not auto-published to root.
+- OpenCode: `init` and `update` publish `AGENTS.md`, `.opencode/agents/*.md`, and `.opencode/skills/*/SKILL.md`.
+- Claude: `init` and `update` publish `CLAUDE.md` and `.claude/commands/*.md`.
+- Gemini: `init` and `update` publish `GEMINI.md`.
+- Add `--all` if you want to publish every supported provider at once.
 
 If GitHub Copilot does not show the custom agent, check these first:
 
