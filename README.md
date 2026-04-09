@@ -92,8 +92,9 @@ Current behavior is intentionally simple:
 - otherwise it clones the GitHub repo and installs the kit into the current project
 - `init` and `update` manage `.agent/` and publish always-on instruction adapters
 - `init` and `update` auto-generate GitHub Copilot custom agent files in `.github/agents/*.agent.md` from `.agent/agents/*.md`
+- `init` and `update` auto-generate OpenCode assets in `.opencode/agents/*.md` and `.opencode/skills/*/SKILL.md` from `.agent`
 - `init` and `update` publish these adapter files when they do not already exist, or refresh them when they are kit-managed: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md`
-- when running inside a git repo, the CLI also adds `.agent/`, `.github/agents/`, `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` to `.git/info/exclude` so generated files stay local by default
+- when running inside a git repo, the CLI also adds `.agent/`, `.github/agents/`, `.opencode/`, `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` to `.git/info/exclude` so generated files stay local by default
 - `update` regenerates only the kit-generated Copilot agents and does not wipe unrelated custom agents
 
 The README only documents behavior that is actually implemented in `bin/cli.js`.
@@ -127,6 +128,16 @@ The install also generates:
 ├── backend-specialist.agent.md
 ├── golang-specialist.agent.md
 ├── security-auditor.agent.md
+└── ...
+
+.opencode/agents/
+├── backend-specialist.md
+├── golang-specialist.md
+└── ...
+
+.opencode/skills/
+├── golang-patterns/SKILL.md
+├── message-broker-patterns/SKILL.md
 └── ...
 
 AGENTS.md
@@ -188,6 +199,7 @@ This kit keeps cross-IDE adapter templates inside `.agent/adapters` as canonical
 
 - GitHub Copilot: `init` and `update` generate `.github/agents/*.agent.md` from `.agent/agents/*.md`, and publish `.github/copilot-instructions.md` and `AGENTS.md` for always-on instructions.
 - Generated Copilot agent files are excluded locally through `.git/info/exclude`, so they do not get picked up by git status unless you explicitly override that behavior.
+- OpenCode: `init` and `update` publish native `.opencode/agents/*.md` and `.opencode/skills/*/SKILL.md`, so OpenCode can discover both subagents and skill definitions directly.
 - Gemini: `init` and `update` publish `GEMINI.md` in project root so Gemini CLI can auto-load context from workspace hierarchy.
 - Claude: `init` and `update` publish `CLAUDE.md` in project root for Claude-compatible tools.
 - Cursor and Windsurf: templates still live under `.agent/adapters/` and are not auto-published to root.
