@@ -15,6 +15,7 @@ const path = require("path");
 const REPO_URL = "https://github.com/nguyenphu0903/my-agents-kit.git";
 const KIT_DIR = ".agent";
 const COPILOT_AGENTS_DIR = path.join(".github", "agents");
+const COPILOT_SKILLS_DIR = path.join(".github", "skills");
 const OPENCODE_AGENTS_DIR = path.join(".opencode", "agents");
 const OPENCODE_SKILLS_DIR = path.join(".opencode", "skills");
 const COPILOT_GLOBAL_NAMESPACE = "my-agents-kit";
@@ -352,6 +353,55 @@ function generateCopilotAgents(sourceRoot, targetDir, useGithubPrefix = true) {
     );
 }
 
+function generateCopilotSkills(sourceRoot, targetDir, useGithubPrefix = true) {
+    const sourceSkillsDir = path.join(sourceRoot, KIT_DIR, "skills");
+
+    if (!fs.existsSync(sourceSkillsDir)) {
+        return;
+    }
+
+    const skillDirs = fs
+        .readdirSync(sourceSkillsDir)
+        .filter((entry) =>
+            fs.statSync(path.join(sourceSkillsDir, entry)).isDirectory(),
+        );
+
+    let exportedCount = 0;
+    for (const skillName of skillDirs) {
+        const sourceSkillPath = path.join(
+            sourceSkillsDir,
+            skillName,
+            "SKILL.md",
+        );
+
+        if (!fs.existsSync(sourceSkillPath)) {
+            continue;
+        }
+
+        const targetSkillPath = path.join(
+            targetDir,
+            useGithubPrefix ? COPILOT_SKILLS_DIR : "skills",
+            skillName,
+            "SKILL.md",
+        );
+
+        const sourceContent = fs.readFileSync(sourceSkillPath, "utf8");
+        const managedContent = toManagedMarkdown(
+            sourceContent,
+            path.join(KIT_DIR, "skills", skillName, "SKILL.md"),
+        );
+        const writeResult = writeManagedFile(targetSkillPath, managedContent);
+
+        if (writeResult.written) {
+            exportedCount += 1;
+        }
+    }
+
+    console.log(
+        `✅ Published ${exportedCount}/${skillDirs.length} Copilot skills in ${useGithubPrefix ? COPILOT_SKILLS_DIR : "skills"}`,
+    );
+}
+
 function generateOpenCodeAssets(sourceRoot, targetDir, useDotPrefix = true) {
     generateOpenCodeAgents(sourceRoot, targetDir, useDotPrefix);
     generateOpenCodeSkills(sourceRoot, targetDir, useDotPrefix);
@@ -490,6 +540,7 @@ function publishGlobalProviderAssets(sourceRoot, providers) {
 
 function publishCopilotWorkspaceAssets(sourceRoot, targetDir) {
     generateCopilotAgents(sourceRoot, targetDir, true);
+    generateCopilotSkills(sourceRoot, targetDir, true);
     publishManagedMarkdownFile(
         sourceRoot,
         path.join(".github", "copilot-instructions.md"),
@@ -499,17 +550,20 @@ function publishCopilotWorkspaceAssets(sourceRoot, targetDir) {
 }
 
 function publishCopilotGlobalAssets(sourceRoot) {
-    const globalRoot = getGlobalCopilotRoot();
-    fs.rmSync(globalRoot, { recursive: true, force: true });
-    fs.mkdirSync(globalRoot, { recursive: true });
+    const agentsRoot = getGlobalCopilotAgentsRoot();
+    const skillsRoot = getGlobalCopilotSkillsRoot();
+    const instructionsRoot = getGlobalCopilotInstructionsRoot();
+    const legacyRoot = getLegacyGlobalCopilotRoot();
+
+    fs.mkdirSync(agentsRoot, { recursive: true });
+    fs.mkdirSync(skillsRoot, { recursive: true });
+    fs.mkdirSync(instructionsRoot, { recursive: true });
+    fs.mkdirSync(legacyRoot, { recursive: true });
 
     const sourceAgentsDir = path.join(sourceRoot, KIT_DIR, "agents");
     const agentFiles = fs
         .readdirSync(sourceAgentsDir)
         .filter((file) => file.endsWith(".md"));
-
-    const agentsRoot = path.join(globalRoot, "agents");
-    fs.mkdirSync(agentsRoot, { recursive: true });
 
     for (const fileName of agentFiles) {
         const sourcePath = path.join(sourceAgentsDir, fileName);
@@ -519,8 +573,22 @@ function publishCopilotGlobalAssets(sourceRoot) {
         );
         const sourceContent = fs.readFileSync(sourcePath, "utf8");
         const agentDoc = toCopilotAgentMarkdown(sourceContent, fileName);
-        fs.writeFileSync(targetPath, agentDoc);
+        writeManagedFile(targetPath, agentDoc);
+
+        // Backward compatibility for previous installs under prompts namespace.
+        const legacyAgentsRoot = path.join(legacyRoot, "agents");
+        const legacyTargetPath = path.join(
+            legacyAgentsRoot,
+            fileName.replace(/\.md$/, ".agent.md"),
+        );
+        writeManagedFile(legacyTargetPath, agentDoc);
     }
+
+    generateCopilotSkills(
+        sourceRoot,
+        path.join(os.homedir(), ".copilot"),
+        false,
+    );
 
     const instructionSource = path.join(
         sourceRoot,
@@ -533,13 +601,21 @@ function publishCopilotGlobalAssets(sourceRoot) {
             instructionContent,
             path.join(".github", "copilot-instructions.md"),
         );
-        fs.writeFileSync(
-            path.join(globalRoot, "my-agents-kit.instructions.md"),
+        writeManagedFile(
+            path.join(instructionsRoot, "my-agents-kit.instructions.md"),
+            instructionDoc,
+        );
+
+        // Backward compatibility for previous installs under prompts namespace.
+        writeManagedFile(
+            path.join(legacyRoot, "my-agents-kit.instructions.md"),
             instructionDoc,
         );
     }
 
-    console.log(`✅ Published global Copilot assets in ${globalRoot}`);
+    console.log(
+        `✅ Published global Copilot assets in ${agentsRoot}, ${skillsRoot}, and ${instructionsRoot}`,
+    );
 }
 
 function publishOpenCodeWorkspaceAssets(sourceRoot, targetDir) {
@@ -693,7 +769,9 @@ function updateGlobalAgentKit(options) {
 }
 
 function checkGlobalStatus() {
-    const copilotRoot = getGlobalCopilotRoot();
+    const copilotAgentsRoot = getGlobalCopilotAgentsRoot();
+    const copilotSkillsRoot = getGlobalCopilotSkillsRoot();
+    const copilotInstructionsRoot = getGlobalCopilotInstructionsRoot();
     const opencodeRoot = getGlobalOpenCodeRoot();
     const claudeRoot = path.join(os.homedir(), ".claude");
     const geminiRoot = path.join(os.homedir(), ".gemini");
@@ -701,13 +779,16 @@ function checkGlobalStatus() {
     console.log("📊 my-agents-kit Global Status");
     console.log("");
 
-    if (fs.existsSync(copilotRoot)) {
+    if (
+        fs.existsSync(copilotAgentsRoot) ||
+        fs.existsSync(copilotSkillsRoot) ||
+        fs.existsSync(copilotInstructionsRoot)
+    ) {
         console.log("✅ Copilot global assets installed");
+        console.log(`   Agents: ${countFiles(copilotAgentsRoot, ".agent.md")}`);
+        console.log(`   Skills: ${countDirectories(copilotSkillsRoot)}`);
         console.log(
-            `   Agents: ${countFiles(path.join(copilotRoot, "agents"), ".agent.md")}`,
-        );
-        console.log(
-            `   Instructions: ${countFiles(copilotRoot, ".instructions.md")}`,
+            `   Instructions: ${countFiles(copilotInstructionsRoot, ".instructions.md")}`,
         );
     } else {
         console.log("❌ Copilot global assets not installed");
@@ -846,7 +927,19 @@ function getCopilotUserPromptsRoot() {
     );
 }
 
-function getGlobalCopilotRoot() {
+function getGlobalCopilotAgentsRoot() {
+    return path.join(os.homedir(), ".copilot", "agents");
+}
+
+function getGlobalCopilotInstructionsRoot() {
+    return path.join(os.homedir(), ".copilot", "instructions");
+}
+
+function getGlobalCopilotSkillsRoot() {
+    return path.join(os.homedir(), ".copilot", "skills");
+}
+
+function getLegacyGlobalCopilotRoot() {
     return path.join(getCopilotUserPromptsRoot(), COPILOT_GLOBAL_NAMESPACE);
 }
 
@@ -860,6 +953,17 @@ function countFiles(rootDir, suffix) {
     }
 
     return fs.readdirSync(rootDir).filter((file) => file.endsWith(suffix))
+        .length;
+}
+
+function countDirectories(rootDir) {
+    if (!fs.existsSync(rootDir)) {
+        return 0;
+    }
+
+    return fs
+        .readdirSync(rootDir)
+        .filter((entry) => fs.statSync(path.join(rootDir, entry)).isDirectory())
         .length;
 }
 
