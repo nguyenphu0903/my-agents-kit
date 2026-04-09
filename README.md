@@ -90,9 +90,10 @@ Current behavior is intentionally simple:
 - commands run against the current working directory
 - `init` copies the local kit files when running from a linked/dev install
 - otherwise it clones the GitHub repo and installs the kit into the current project
-- `init` and `update` only manage `.agent/`
+- `init` and `update` manage `.agent/` and publish always-on instruction adapters
 - `init` and `update` auto-generate GitHub Copilot custom agent files in `.github/agents/*.agent.md` from `.agent/agents/*.md`
-- when running inside a git repo, the CLI also adds `.agent/` and `.github/agents/` to `.git/info/exclude` so the generated files stay local by default
+- `init` and `update` publish these adapter files when they do not already exist, or refresh them when they are kit-managed: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md`
+- when running inside a git repo, the CLI also adds `.agent/`, `.github/agents/`, `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` to `.git/info/exclude` so generated files stay local by default
 - `update` regenerates only the kit-generated Copilot agents and does not wipe unrelated custom agents
 
 The README only documents behavior that is actually implemented in `bin/cli.js`.
@@ -127,6 +128,11 @@ The install also generates:
 ├── golang-specialist.agent.md
 ├── security-auditor.agent.md
 └── ...
+
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.github/copilot-instructions.md
 ```
 
 Typical usage examples:
@@ -178,11 +184,13 @@ Available workflows:
 
 ## IDE Compatibility
 
-This kit keeps cross-IDE adapter templates inside `.agent/adapters`, but does not write them into the repo root by default.
+This kit keeps cross-IDE adapter templates inside `.agent/adapters` as canonical templates, and publishes selected files into standard runtime locations during install/update.
 
-- GitHub Copilot: `init` and `update` generate `.github/agents/*.agent.md` from `.agent/agents/*.md`, so Copilot-compatible custom agents are available immediately after install.
+- GitHub Copilot: `init` and `update` generate `.github/agents/*.agent.md` from `.agent/agents/*.md`, and publish `.github/copilot-instructions.md` and `AGENTS.md` for always-on instructions.
 - Generated Copilot agent files are excluded locally through `.git/info/exclude`, so they do not get picked up by git status unless you explicitly override that behavior.
-- Gemini, Claude, Cursor, and Windsurf: templates live under `.agent/adapters/` so the kit stays self-contained and does not spill hidden config folders into the project root.
+- Gemini: `init` and `update` publish `GEMINI.md` in project root so Gemini CLI can auto-load context from workspace hierarchy.
+- Claude: `init` and `update` publish `CLAUDE.md` in project root for Claude-compatible tools.
+- Cursor and Windsurf: templates still live under `.agent/adapters/` and are not auto-published to root.
 
 If GitHub Copilot does not show the custom agent, check these first:
 
