@@ -9,7 +9,7 @@
 my-agents-kit is a modular system consisting of:
 
 - **21 Specialist Agents** - Role-based AI personas (Golang, backend, frontend, security, etc.)
-- **52 Skills** - Domain and workflow knowledge modules (including Go, Kafka, NATS, Redis, review, execution, MCP)
+- **53 Skills** - Domain and workflow knowledge modules (including Go, Kafka, NATS, Redis, review, execution, MCP)
 - **13 Workflows** - Slash command procedures
 
 ---
@@ -36,9 +36,9 @@ Specialist AI personas for different domains.
 | ------------------------ | ----------------------------------- | ------------------------------------------------------------------------------- |
 | `orchestrator`           | Multi-agent coordination            | parallel-agents, behavioral-modes                                               |
 | `project-planner`        | Discovery, task planning            | brainstorming, plan-writing, architecture                                       |
-| `golang-specialist`      | **Go backend, distributed systems** | **golang-patterns, message-broker-patterns, caching-patterns, database-design** |
+| `golang-specialist`      | **Go backend, distributed systems** | **golang-clean-architecture, golang-patterns, message-broker-patterns, caching-patterns, database-design** |
 | `frontend-specialist`    | Web UI/UX                           | frontend-design, nextjs-react-expert, tailwind-patterns                         |
-| `backend-specialist`     | Go, API, business logic            | golang-patterns, api-patterns, nodejs-best-practices, database-design           |
+| `backend-specialist`     | Go, API, business logic            | golang-clean-architecture, golang-patterns, api-patterns, nodejs-best-practices, database-design |
 | `database-architect`     | Schema, SQL                         | database-design, prisma-expert                                                  |
 | `mobile-developer`       | iOS, Android, RN                    | mobile-design                                                                   |
 | `game-developer`         | Game systems and gameplay loops     | clean-code                                                                      |
@@ -58,7 +58,7 @@ Specialist AI personas for different domains.
 
 ---
 
-## 🧩 Skills (52)
+## 🧩 Skills (53)
 
 Modular knowledge domains that agents can load on-demand.
 
@@ -82,12 +82,13 @@ Modular knowledge domains that agents can load on-demand.
 
 ### Backend & API
 
-| Skill                   | Description                    |
-| ----------------------- | ------------------------------ |
-| `api-patterns`          | REST, GraphQL, tRPC            |
-| `nestjs-expert`         | NestJS modules, DI, decorators |
-| `nodejs-best-practices` | Node.js async, modules         |
-| `python-patterns`       | Python standards, FastAPI      |
+| Skill                   | Description                                                        |
+| ----------------------- | ------------------------------------------------------------------ |
+| `golang-clean-architecture` | Audit Go Clean Architecture layering and dependency rules       |
+| `api-patterns`          | REST, GraphQL, tRPC                                                |
+| `nestjs-expert`         | NestJS modules, DI, decorators                                     |
+| `nodejs-best-practices` | Node.js async, modules                                             |
+| `python-patterns`       | Python standards, FastAPI                                          |
 
 ### Database
 

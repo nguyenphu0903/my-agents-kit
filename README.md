@@ -16,7 +16,7 @@ It combines specialist agents, reusable skills, and slash-style workflows for Go
 ## What This Repo Contains
 
 - `21` specialist agents in `.agent/agents`
-- `52` skills in `.agent/skills`
+- `53` skills in `.agent/skills`
 - `13` workflows in `.agent/workflows`
 - adapter templates in `.agent/adapters`
 - a small CLI in `bin/cli.js` for `init`, `update`, and `status`

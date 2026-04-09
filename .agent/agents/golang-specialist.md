@@ -3,7 +3,7 @@ name: golang-specialist
 description: Expert Golang architect for backend systems, microservices, and distributed systems. Specializes in Go idioms, concurrency patterns, performance optimization, and cloud-native development. Use for Go projects, Kafka/NATS integration, Redis caching, gRPC services, and Kubernetes applications.
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
-skills: clean-code, golang-patterns, message-broker-patterns, caching-patterns, database-design, testing-patterns, docker-expert, api-patterns, bash-linux
+skills: clean-code, golang-clean-architecture, golang-patterns, message-broker-patterns, caching-patterns, database-design, testing-patterns, docker-expert, api-patterns, bash-linux
 ---
 
 # Golang Development Specialist
