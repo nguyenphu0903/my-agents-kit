@@ -10,6 +10,7 @@ It combines specialist agents, reusable skills, and slash-style workflows for Go
 
 - The runtime source of truth is `.agent/`
 - The package and CLI name are `my-agents-kit`
+- Codex support is generated automatically during install and update
 - GitHub Copilot support is generated automatically during install and update
 - Existing runtimes that already expect `.agent/` can keep working without renaming project folders
 
@@ -92,8 +93,8 @@ The CLI currently supports:
 - `my-agents-kit init`
 - `my-agents-kit update`
 - `my-agents-kit status`
-- add `--global` to initialize or update machine-wide Copilot/OpenCode customizations
-- add `--provider=copilot|opencode|claude|gemini` to force a provider
+- add `--global` to initialize or update machine-wide Codex/Copilot/OpenCode customizations
+- add `--provider=codex|copilot|opencode|claude|gemini` to force a provider
 - add `--all` to publish every supported provider
 
 Current behavior is intentionally simple:
@@ -104,6 +105,7 @@ Current behavior is intentionally simple:
 - `init` and `update` auto-detect the active provider and publish only that provider by default
 - `--provider=` and `--all` override the auto-detect behavior
 - `--global` publishes machine-wide assets for the detected provider
+- `codex` publishes `AGENTS.md`, `.agents/skills/*/SKILL.md`, and `.codex/agents/*.toml`
 - `copilot` publishes `.github/copilot-instructions.md` and `.github/agents/*.agent.md`
 - `opencode` publishes `AGENTS.md`, `.opencode/agents/*.md`, and `.opencode/skills/*/SKILL.md`
 - `claude` publishes `CLAUDE.md` and `.claude/commands/*.md`
@@ -129,6 +131,7 @@ After installation in a target project, the kit adds a `.agent` directory with:
 
 The `adapters/` folder stores thin runtime templates for:
 
+- Codex/OpenCode `AGENTS.md`
 - Gemini
 - Claude-style command files
 - Cursor rules
@@ -137,6 +140,16 @@ The `adapters/` folder stores thin runtime templates for:
 The install also generates:
 
 ```text
+.agents/skills/
+├── golang-patterns/SKILL.md
+├── message-broker-patterns/SKILL.md
+└── ...
+
+.codex/agents/
+├── backend-specialist.toml
+├── golang-specialist.toml
+└── ...
+
 .github/agents/
 ├── backend-specialist.agent.md
 ├── golang-specialist.agent.md
@@ -210,12 +223,20 @@ Available workflows:
 
 This kit keeps cross-IDE adapter templates inside `.agent/adapters` as canonical templates, and publishes only the detected provider’s files during install/update unless you override it.
 
+- Codex: `init` and `update` generate `AGENTS.md`, `.agents/skills/*/SKILL.md`, and `.codex/agents/*.toml`.
 - GitHub Copilot: `init` and `update` generate `.github/agents/*.agent.md` and `.github/copilot-instructions.md`.
 - Generated Copilot agent files are excluded locally through `.git/info/exclude`, so they do not get picked up by git status unless you explicitly override that behavior.
 - OpenCode: `init` and `update` publish `AGENTS.md`, `.opencode/agents/*.md`, and `.opencode/skills/*/SKILL.md`.
 - Claude: `init` and `update` publish `CLAUDE.md` and `.claude/commands/*.md`.
 - Gemini: `init` and `update` publish `GEMINI.md`.
 - Add `--all` if you want to publish every supported provider at once.
+
+Codex discovery behavior follows the official Codex conventions:
+
+- repository instructions are read from `AGENTS.md`
+- repository skills are read from `.agents/skills`
+- project-scoped custom agents are read from `.codex/agents`
+- global Codex assets are published to `$CODEX_HOME` when set, otherwise `~/.codex`; global skills are published to `~/.agents/skills`
 
 If GitHub Copilot does not show the custom agent, check these first:
 
